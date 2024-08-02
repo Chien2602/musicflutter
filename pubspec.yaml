@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   font_awesome_flutter: ^10.7.0
   community_material_icon: ^5.9.55
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,28 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/fonts/
+  fonts:
+    - family: JetBrainsMono
+      fonts:
+        - asset: lib/assets/fonts/JetBrainsMono-VariableFont_wght.ttf
+    - family: NotoSerif
+      fonts:
+        - asset: lib/assets/fonts/NotoSerif-VariableFont_wdth,wght.ttf
+    - family: Lato
+      fonts:
+        - asset: lib/assets/fonts/Lato-Regular.ttf
+    - family: Roboto
+      fonts:
+        - asset: lib/assets/fonts/Roboto-Black.ttf
+    - family: Ubuntu
+      fonts:
+        - asset: lib/assets/fonts/Ubuntu-Regular.ttf
+    - family: RobotoRegular
+      fonts:
+        - asset: lib/assets/fonts/Roboto-Regular.ttf
+
 Icon:
 
   # The following line ensures that the Material Icons font is

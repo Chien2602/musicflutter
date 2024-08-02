@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:musicflutter/UI/Signup.dart';
+import 'package:provider/provider.dart';
+import '../main.dart';
 import 'HomePageAdmin.dart';
 import 'HomePageUser.dart';
 
@@ -37,6 +39,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loginPageTheme = ThemeData.light().copyWith(
+      primaryColor: Colors.teal,
+    );
     return Scaffold(
       backgroundColor: Colors.teal[50],
       body: Center(
@@ -54,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 size: 100,
                 color: Colors.blue,
               ),
+
               SizedBox(height: 50),
               Text(
                 'Login',

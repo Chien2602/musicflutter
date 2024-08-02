@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:musicflutter/UI/Login.dart';
+import 'package:provider/provider.dart';
 
+import '../main.dart';
 import 'HomePage/Home.dart';
 import 'HomePage/InsertMusic.dart';
 import 'HomePage/ListMusic.dart';
@@ -32,9 +34,10 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       _selectedIndex = index;
     });
   }
-
+  late bool isDarkMode;
   @override
   Widget build(BuildContext context) {
+    isDarkMode = Provider.of<ThemeNotifier>(context).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         leading: Tooltip(
@@ -43,7 +46,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
             showMyAlertDialog(context);
           }, icon: Icon(FontAwesomeIcons.angleLeft)),
         ),
-        title: Text('My App'),
+        title: Center(child: Text('MUSIC APP'),),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -85,7 +88,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   void showMyAlertDialog(BuildContext context) {
     // Create AlertDialog
     AlertDialog dialog = AlertDialog(
-      title: Text("Thông báo"),
+      title: Text("Thông báo", style: TextStyle(color: Colors.redAccent)),
       content: Text("Bạn muốn đăng xuất?"),
       actions: [
         ElevatedButton(
@@ -103,7 +106,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       ],
     );
 
-    // Call showDialog function to show dialog.
     Future<String?> futureValue = showDialog<String>(
       context: context,
       builder: (BuildContext context) {
@@ -115,6 +117,9 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       setState(() {
         answer = data ?? "?";
         if(answer == "Yes"){
+          if(isDarkMode == true){
+            Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
+          }
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => LoginPage()),
