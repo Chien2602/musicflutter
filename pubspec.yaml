@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: ">=3.4.3 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -38,6 +38,21 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   community_material_icon: ^5.9.55
   provider: ^6.1.2
+  sqflite: any
+  path: any
+  sqflite_common_ffi: ^2.3.3
+  path_provider: ^2.1.4
+  google_fonts: ^6.2.1
+  audioplayers: ^6.0.0
+  url_launcher: ^6.0.9
+  spotify_sdk:
+  flutter_web_auth:
+  webview_flutter: ^3.0.0
+  shared_preferences:
+  just_audio:
+  flutter_spinkit:
+  sqlite3:
+  flutter_staggered_grid_view:
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +64,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner:
+  hive_generator:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -56,34 +73,33 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/fonts/
+    - lib/assets/fonts/
+    - lib/assets/Spotify_Primary_Logo_RGB_Green.png
+    - windows/runner/sqlite3.dll
   fonts:
     - family: JetBrainsMono
       fonts:
-        - asset: lib/assets/fonts/JetBrainsMono-VariableFont_wght.ttf
+        - asset: lib/assets/fonts/JetBrains_Mono,Lato,Noto_Serif,Poppins,Roboto,etc/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf
     - family: NotoSerif
       fonts:
-        - asset: lib/assets/fonts/NotoSerif-VariableFont_wdth,wght.ttf
+        - asset: lib/assets/fonts/JetBrains_Mono,Lato,Noto_Serif,Poppins,Roboto,etc/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf
     - family: Lato
       fonts:
-        - asset: lib/assets/fonts/Lato-Regular.ttf
+        - asset: lib/assets/fonts/JetBrains_Mono,Lato,Noto_Serif,Poppins,Roboto,etc/Lato/Lato-Black.ttf
     - family: Roboto
       fonts:
-        - asset: lib/assets/fonts/Roboto-Black.ttf
+        - asset: lib/assets/fonts/JetBrains_Mono,Lato,Noto_Serif,Poppins,Roboto,etc/Roboto/Roboto-Black.ttf
     - family: Ubuntu
       fonts:
-        - asset: lib/assets/fonts/Ubuntu-Regular.ttf
+        - asset: lib/assets/fonts/JetBrains_Mono,Lato,Noto_Serif,Poppins,Roboto,etc/Ubuntu/Ubuntu-Regular.ttf
     - family: RobotoRegular
       fonts:
-        - asset: lib/assets/fonts/Roboto-Regular.ttf
-
-Icon:
+        - asset: lib/assets/fonts/JetBrains_Mono,Lato,Noto_Serif,Poppins,Roboto,etc/Roboto/Roboto-Regular.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

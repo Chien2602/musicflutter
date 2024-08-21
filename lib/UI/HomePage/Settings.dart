@@ -1,5 +1,4 @@
 //import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../font_provider.dart';
 import '../../main.dart';
+import '../ThemeNotifier.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -38,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               SizedBox(width: 20),
-              IconButton(
+             IconButton(
                 icon: Icon(isDarkMode
                     ? FontAwesomeIcons.toggleOn
                     : FontAwesomeIcons.toggleOff),

@@ -1,16 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:musicflutter/UI/Login.dart';
-import 'package:provider/provider.dart';
+import 'package:musicflutter/UI/HomePage/UserManagement.dart';
 
-import '../main.dart';
+import 'HomePage/AdminAccount.dart';
 import 'HomePage/Home.dart';
-import 'HomePage/InsertMusic.dart';
 import 'HomePage/ListMusic.dart';
 import 'HomePage/Settings.dart';
-import 'HomePage/User.dart';
+import 'Login.dart';
 
 class HomePageAdmin extends StatefulWidget {
   @override
@@ -19,13 +16,14 @@ class HomePageAdmin extends StatefulWidget {
 
 class _HomePageAdminState extends State<HomePageAdmin> {
   int _selectedIndex = 0;
-  String answer = "?";
 
-  static List<Widget> _widgetOptions = <Widget>[
+  final PageController _pageController = PageController();
+
+  final List<Widget> _widgetOptions = [
     HomePage(),
     ListPage(),
-    InsertMusicPage(),
-    UserPage(),
+    UserManagement(),
+    AdminAccount(),
     SettingsPage(),
   ];
 
@@ -33,49 +31,53 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
   }
-  late bool isDarkMode;
+
   @override
   Widget build(BuildContext context) {
-    isDarkMode = Provider.of<ThemeNotifier>(context).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         leading: Tooltip(
-          message: 'back',
-          child: IconButton(onPressed: (){
-            showMyAlertDialog(context);
-          }, icon: Icon(FontAwesomeIcons.angleLeft)),
+          message: 'Back',
+          child: IconButton(
+            onPressed: () {
+              showMyAlertDialog(context);
+            },
+            icon: Icon(FontAwesomeIcons.angleLeft),
+          ),
         ),
-        title: Center(child: Text('MUSIC APP'),),
+        title: Center(child: Text('MUSIC APP')),
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const<BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.house, color: Colors.blue,),
+            icon: Icon(FontAwesomeIcons.house, color: Colors.blue),
             label: 'Home',
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.list, color: Colors.blue,),
+            icon: Icon(FontAwesomeIcons.list, color: Colors.blue),
             label: 'List',
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.fileImport, color: Colors.blue,),
-            label: 'Insert Music',
+            icon: Icon(FontAwesomeIcons.fileImport, color: Colors.blue),
+            label: 'User Management',
           ),
-
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user, color: Colors.blue,),
-            label: 'User',
+            icon: Icon(FontAwesomeIcons.user, color: Colors.blue),
+            label: 'Account',
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.gear, color: Colors.blue,),
+            icon: Icon(FontAwesomeIcons.gear, color: Colors.blue),
             label: 'Settings',
           ),
         ],
@@ -85,8 +87,8 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       ),
     );
   }
+
   void showMyAlertDialog(BuildContext context) {
-    // Create AlertDialog
     AlertDialog dialog = AlertDialog(
       title: Text("Thông báo", style: TextStyle(color: Colors.redAccent)),
       content: Text("Bạn muốn đăng xuất?"),
@@ -115,12 +117,8 @@ class _HomePageAdminState extends State<HomePageAdmin> {
 
     futureValue.then((String? data) {
       setState(() {
-        answer = data ?? "?";
-        if(answer == "Yes"){
-          if(isDarkMode == true){
-            Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
-          }
-          Navigator.push(
+        if (data == "Yes") {
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => LoginPage()),
           );
@@ -131,5 +129,3 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     });
   }
 }
-
-

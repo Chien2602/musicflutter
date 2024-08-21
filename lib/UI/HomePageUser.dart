@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:musicflutter/UI/Login.dart';
-import 'package:provider/provider.dart';
-
-import '../main.dart';
 import 'HomePage/Home.dart';
 import 'HomePage/ListMusic.dart';
 import 'HomePage/Settings.dart';
-import 'HomePage/User.dart';
+import 'HomePage/UserAccount.dart';
+import 'Login.dart';
 
 class HomePageUser extends StatefulWidget {
   @override
@@ -18,12 +14,13 @@ class HomePageUser extends StatefulWidget {
 
 class _HomePageUserState extends State<HomePageUser> {
   int _selectedIndex = 0;
-  String answer = "?";
 
-  static List<Widget> _widgetOptions = <Widget>[
+  final PageController _pageController = PageController();
+
+  final List<Widget> _widgetOptions = [
     HomePage(),
     ListPage(),
-    UserPage(),
+    UserAccount(),
     SettingsPage(),
   ];
 
@@ -31,6 +28,7 @@ class _HomePageUserState extends State<HomePageUser> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
   }
 
   @override
@@ -38,35 +36,41 @@ class _HomePageUserState extends State<HomePageUser> {
     return Scaffold(
       appBar: AppBar(
         leading: Tooltip(
-          message: 'back',
-          child: IconButton(onPressed: (){
-            showMyAlertDialog(context);
-          }, icon: Icon(FontAwesomeIcons.angleLeft)),
+          message: 'Back',
+          child: IconButton(
+            onPressed: () {
+              showMyAlertDialog(context);
+            },
+            icon: Icon(FontAwesomeIcons.angleLeft),
+          ),
         ),
-        title: Center(child: Text('MUSIC APP'),),
+        title: Center(child: Text('MUSIC APP')),
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const<BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.house, color: Colors.blue,),
+            icon: Icon(FontAwesomeIcons.house, color: Colors.blue),
             label: 'Home',
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.list, color: Colors.blue,),
+            icon: Icon(FontAwesomeIcons.list, color: Colors.blue),
             label: 'List',
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user, color: Colors.blue,),
-            label: 'User',
+            icon: Icon(FontAwesomeIcons.user, color: Colors.blue),
+            label: 'Account',
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.gear, color: Colors.blue,),
+            icon: Icon(FontAwesomeIcons.gear, color: Colors.blue),
             label: 'Settings',
           ),
         ],
@@ -76,6 +80,7 @@ class _HomePageUserState extends State<HomePageUser> {
       ),
     );
   }
+
   void showMyAlertDialog(BuildContext context) {
     AlertDialog dialog = AlertDialog(
       title: Text("Thông báo", style: TextStyle(color: Colors.redAccent)),
@@ -96,7 +101,6 @@ class _HomePageUserState extends State<HomePageUser> {
       ],
     );
 
-    // Call showDialog function to show dialog.
     Future<String?> futureValue = showDialog<String>(
       context: context,
       builder: (BuildContext context) {
@@ -106,12 +110,10 @@ class _HomePageUserState extends State<HomePageUser> {
 
     futureValue.then((String? data) {
       setState(() {
-        answer = data ?? "?";
-        if(answer == "Yes"){
-          Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
-          Navigator.push(
+        if (data == "Yes") {
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute( builder: (context) => LoginPage(),),
+            MaterialPageRoute(builder: (context) => LoginPage()),
           );
         }
       });
@@ -120,5 +122,3 @@ class _HomePageUserState extends State<HomePageUser> {
     });
   }
 }
-
-
