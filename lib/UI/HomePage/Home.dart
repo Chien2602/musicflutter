@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../MusicPlayerPage.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -37,7 +39,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Top Songs This Week'),
+        backgroundColor: Colors.blue,
+        leading: IconButton(
+          icon: Icon(Icons.music_note, color: Colors.white),
+          onPressed: (){},
+        ),
+        title: Text("Top bài hát", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -72,55 +79,72 @@ class _HomePageState extends State<HomePage> {
                   final albumImageUrl = song['album']['images'][1]['url'];
                   final songTitle = song['name'];
                   final artistName = song['artists'][0]['name'];
-
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 8,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Image.network(
-                            albumImageUrl,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) {
-                                return child;
-                              } else {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                        ? loadingProgress
-                                        .cumulativeBytesLoaded /
-                                        (loadingProgress
-                                            .expectedTotalBytes ??
-                                            1)
-                                        : null,
-                                  ),
-                                );
-                              }
-                            },
-                            errorBuilder: (context, error, stackTrace) =>
-                                Center(child: Icon(Icons.error)),
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                  final trackUrl = song['external_urls']['spotify'];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MusicPlayerPage(
+                            trackName: songTitle,
+                            artistName: artistName,
+                            albumImageUrl: albumImageUrl,
+                            trackUrl: trackUrl,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                songTitle,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(artistName),
-                            ],
+                      );
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 8,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              albumImageUrl,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                          .expectedTotalBytes ??
+                                                      1)
+                                              : null,
+                                    ),
+                                  );
+                                }
+                              },
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Center(child: Icon(Icons.error)),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  songTitle,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(artistName),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -152,7 +176,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<List<dynamic>> getPlaylistTracks(String token, String playlistId) async {
+  Future<List<dynamic>> getPlaylistTracks(
+      String token, String playlistId) async {
     final response = await http.get(
       Uri.parse('https://api.spotify.com/v1/playlists/$playlistId/tracks'),
       headers: {

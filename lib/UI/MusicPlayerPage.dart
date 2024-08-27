@@ -86,7 +86,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     }
 
     final String token = await _getToken();
-    final String pauseUrl = 'https://api.spotify.com/v1/me/player/pause?device_id=$activeDeviceId';
+    final String pauseUrl =
+        'https://api.spotify.com/v1/me/player/pause?device_id=$activeDeviceId';
 
     final response = await http.put(
       Uri.parse(pauseUrl),
@@ -105,9 +106,11 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       prefs.setString('current_track_id', _currentTrackID ?? '');
     } else if (response.statusCode == 403) {
       final responseBody = json.decode(response.body);
-      print('Lỗi quyền truy cập khi tạm dừng bài hát: ${responseBody['error']['message']}');
+      print(
+          'Lỗi quyền truy cập khi tạm dừng bài hát: ${responseBody['error']['message']}');
     } else {
-      print('Lỗi khi tạm dừng bài hát: ${response.statusCode} - ${response.body}');
+      print(
+          'Lỗi khi tạm dừng bài hát: ${response.statusCode} - ${response.body}');
     }
   }
 
@@ -139,7 +142,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     }
 
     final String token = await _getToken();
-    final String playUrl = 'https://api.spotify.com/v1/me/player/play?device_id=$activeDeviceId';
+    final String playUrl =
+        'https://api.spotify.com/v1/me/player/play?device_id=$activeDeviceId';
     final trackID = widget.trackUrl.split('/').last.split('?').first;
 
     final int startPositionMs = isTrackEnded ? 0 : position.inMilliseconds;
@@ -183,7 +187,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     }
 
     final String token = await _getToken();
-    final String seekUrl = 'https://api.spotify.com/v1/me/player/seek?position_ms=${(value * 1000).toInt()}&device_id=$activeDeviceId';
+    final String seekUrl =
+        'https://api.spotify.com/v1/me/player/seek?position_ms=${(value * 1000).toInt()}&device_id=$activeDeviceId';
 
     final response = await http.put(
       Uri.parse(seekUrl),
@@ -218,7 +223,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       }
 
       final String token = await _getToken();
-      final String positionUrl = 'https://api.spotify.com/v1/me/player/currently-playing';
+      final String positionUrl =
+          'https://api.spotify.com/v1/me/player/currently-playing';
 
       final response = await http.get(
         Uri.parse(positionUrl),
@@ -250,7 +256,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           duration = Duration.zero;
         });
       } else {
-        print('Lỗi khi lấy thông tin bài hát hiện tại: ${response.statusCode} - ${response.body}');
+        print(
+            'Lỗi khi lấy thông tin bài hát hiện tại: ${response.statusCode} - ${response.body}');
       }
 
       await Future.delayed(Duration(seconds: 1));
@@ -281,153 +288,165 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     final positionInSeconds = position.inSeconds.toDouble();
     final durationInSeconds = duration.inSeconds.toDouble();
     final sliderMax = durationInSeconds > 0.0 ? durationInSeconds : 1.0;
-    final positionValue = positionInSeconds > sliderMax ? sliderMax : positionInSeconds;
+    final positionValue =
+        positionInSeconds > sliderMax ? sliderMax : positionInSeconds;
 
     return Scaffold(
       backgroundColor: Colors.green[800],
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color(0xFF667EEA),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () async {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setInt('position_ms', position.inMilliseconds);
-            await prefs.setBool('is_playing', isPlaying);
-
-            Navigator.pop(context, isPlaying);
+            await _pauseTrack();
+            Navigator.pop(context);
           },
         ),
+          title: Center(child: Text("PHÁT NHẠC")),
       ),
-      body: Stack(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: EdgeInsets.all(20),
-                height: 150,
-                width: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  image: DecorationImage(
-                    image: NetworkImage(widget.albumImageUrl),
-                    fit: BoxFit.cover,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black45,
-                      blurRadius: 15,
-                      offset: Offset(0, 10),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                widget.trackName,
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(
-                widget.artistName,
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  color: Colors.white70,
-                ),
-              ),
-              SizedBox(height: 20),
-              Slider(
-                activeColor: Colors.white,
-                inactiveColor: Colors.white24,
-                value: positionValue,
-                min: 0.0,
-                max: sliderMax,
-                onChanged: (value) {
-                  _seekTrack(value);
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Text(
-                      "${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.red,
-                      size: 32,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isFavorite = !isFavorite;
-                      });
-                    },
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    icon: Icon(Icons.replay_5),
-                    color: Colors.white,
-                    iconSize: 40,
-                    onPressed: _seekRelay,
-                  ),
-                  SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: isPlaying ? _pauseTrack : _resumeTrack,
-                    child: Container(
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        isPlaying ? Icons.pause : Icons.play_arrow,
-                        color: Colors.green[800],
-                        size: 35,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    icon: Icon(Icons.forward_5),
-                    color: Colors.white,
-                    iconSize: 40,
-                    onPressed: _seekForward,
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    icon: Icon(Icons.share, color: Colors.white),
-                    onPressed: _copyToClipboard,
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    icon: Icon(Icons.lyrics, color: Colors.white),
-                    onPressed: () {
-                      _showLyricsDialog(context);
-                    },
-                  ),
-                ],
-              ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF667EEA),
+              Colors.green,
+              Color(0xFF764BA2),
             ],
           ),
-        ],
+        ),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.all(20),
+                  height: 150,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    image: DecorationImage(
+                      image: NetworkImage(widget.albumImageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black45,
+                        blurRadius: 15,
+                        offset: Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  widget.trackName,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  widget.artistName,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    color: Colors.white70,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Slider(
+                  activeColor: Colors.white,
+                  inactiveColor: Colors.white24,
+                  value: positionValue,
+                  min: 0.0,
+                  max: sliderMax,
+                  onChanged: (value) {
+                    _seekTrack(value);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        "${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.red,
+                        size: 32,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isFavorite = !isFavorite;
+                        });
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      icon: Icon(Icons.replay_5),
+                      color: Colors.white,
+                      iconSize: 40,
+                      onPressed: _seekRelay,
+                    ),
+                    SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: isPlaying ? _pauseTrack : _resumeTrack,
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isPlaying ? Icons.pause : Icons.play_arrow,
+                          color: Colors.green[800],
+                          size: 35,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      icon: Icon(Icons.forward_5),
+                      color: Colors.white,
+                      iconSize: 40,
+                      onPressed: _seekForward,
+                    ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      icon: Icon(Icons.share, color: Colors.white),
+                      onPressed: _copyToClipboard,
+                    ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      icon: Icon(Icons.lyrics, color: Colors.white),
+                      onPressed: () {
+                        _showLyricsDialog(context);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

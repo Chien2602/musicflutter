@@ -12,7 +12,7 @@ class LyricsApp extends StatelessWidget {
       title: 'Lyrics Viewer',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
-        textTheme: GoogleFonts.robotoMonoTextTheme(
+        textTheme: GoogleFonts.robotoTextTheme(
           Theme.of(context).textTheme,
         ),
         scaffoldBackgroundColor: Colors.blue,
@@ -45,7 +45,6 @@ class _LyricsScreenState extends State<LyricsScreen> {
     String? artistName = prefs.getString('current_artist_name');
     print(trackName);
 
-    // Check if trackName and artistName are not null or empty
     if (trackName == null || artistName == null || trackName.isEmpty || artistName.isEmpty) {
       setState(() {
         _lyrics = "No song information found.";
@@ -54,21 +53,18 @@ class _LyricsScreenState extends State<LyricsScreen> {
       return;
     }
 
-    // Initialize Genius API client with your access token
     Genius genius = Genius(
-        accessToken:
-        'm9cKhYPQI6ws8WQJzaXL4DOoSebWnA3DnO1U35QL10dRyz-tzCWwfbGZiP_vkkRY');
+      accessToken: 'm9cKhYPQI6ws8WQJzaXL4DOoSebWnA3DnO1U35QL10dRyz-tzCWwfbGZiP_vkkRY',
+    );
 
     try {
-      // Search for a specific song by artist and title
-      Song? song = await genius.searchSong(
-          artist: artistName, title: trackName); // Fixed missing semicolon here
+      Song? song = await genius.searchSong(artist: artistName, title: trackName);
 
       if (song != null) {
         setState(() {
-          _lyrics = song.lyrics ?? "Lyrics not available."; // Handling null lyrics
-          _songTitle = song.title ?? "Unknown Title"; // Handling null title
-          _artistName = song.primaryArtist?.name ?? "Unknown Artist"; // Handling null artist
+          _lyrics = song.lyrics ?? "Lyrics not available.";
+          _songTitle = song.title ?? "Unknown Title";
+          _artistName = song.primaryArtist?.name ?? "Unknown Artist";
           _isLoading = false;
         });
       } else {
@@ -91,61 +87,75 @@ class _LyricsScreenState extends State<LyricsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Lyrics Viewer',
-          style: GoogleFonts.pacifico(
+          'Lời bài hát',
+          style: GoogleFonts.roboto(
             fontSize: 24,
             color: Colors.white,
           ),
         ),
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _isLoading
-              ? CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
-          )
-              : SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _songTitle,
-                  style: GoogleFonts.lobster(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.deepPurple,
+              Colors.black,
+              Colors.deepPurple,
+            ],
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            child: _isLoading
+                ? CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            )
+                : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _songTitle,
+                    style: GoogleFonts.lobster(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  _artistName,
-                  style: GoogleFonts.roboto(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.grey[400],
+                  SizedBox(height: 8),
+                  Text(
+                    _artistName,
+                    style: GoogleFonts.roboto(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white70,
+                    ),
                   ),
-                ),
-                Divider(
-                  color: Colors.deepPurple,
-                  thickness: 1,
-                  height: 30,
-                ),
-                Text(
-                  _lyrics,
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 18,
-                    color: Colors.white,
+                  Divider(
+                    color: Colors.white70,
+                    thickness: 1,
+                    height: 30,
                   ),
-                ),
-              ],
+                  Text(
+                    _lyrics,
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 18,
+                      color: Colors.white,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

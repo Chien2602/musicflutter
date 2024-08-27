@@ -94,81 +94,89 @@ class _ListPage extends State<ListPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            MusicPlayerPage(
-              trackName: trackName ?? 'No song playing',
-              artistName: artistName ?? '',
-              albumImageUrl: albumImageUrl ?? '',
-              trackUrl: trackUrl ?? '',
-            ),
+        builder: (context) => MusicPlayerPage(
+          trackName: trackName ?? 'No song playing',
+          artistName: artistName ?? '',
+          albumImageUrl: albumImageUrl ?? '',
+          trackUrl: trackUrl ?? '',
+        ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Spotify Playlist and Search'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.blue,
+            ],
+          ),
         ),
-      ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity != null && details.primaryVelocity! > 0) {
-            _navigateToMusicPlayer(); // Vuốt phải, điều hướng đến trang MusicPlayerPage
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        labelText: 'Tìm kiếm bài hát, album, nghệ sĩ, playlist',
-                        border: OutlineInputBorder(
+        child: GestureDetector(
+          onHorizontalDragEnd: (details) {
+            if (details.primaryVelocity != null &&
+                details.primaryVelocity! > 0) {
+              _navigateToMusicPlayer(); // Vuốt phải, điều hướng đến trang MusicPlayerPage
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          labelText:
+                              'Tìm kiếm bài hát, album, nghệ sĩ, playlist',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onSubmitted: (_) => _search(),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: _search,
+                      style: ElevatedButton.styleFrom(
+                        textStyle: TextStyle(color: Colors.white),
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onSubmitted: (_) => _search(),
+                      child: Text('Search'),
                     ),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _search,
-                    style: ElevatedButton.styleFrom(
-                      textStyle: TextStyle(color: Colors.white),
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text('Search'),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              Expanded(
-                child: _isSearching
-                    ? Center(child: CircularProgressIndicator())
-                    : _searchResults != null && _searchResults!.isNotEmpty
-                    ? ListView(
-                  children: _buildSearchResults(),
-                )
-                    : _isLoadingPlaylist
-                    ? Center(child: CircularProgressIndicator())
-                    : _playlistTracks != null && _playlistTracks!.isNotEmpty
-                    ? ListView(
-                  children: _buildPlaylistTracks(),
-                )
-                    : Center(child: Text('No results found')),
-              ),
-            ],
+                  ],
+                ),
+                SizedBox(height: 16),
+                Expanded(
+                  child: _isSearching
+                      ? Center(child: CircularProgressIndicator())
+                      : _searchResults != null && _searchResults!.isNotEmpty
+                          ? ListView(
+                              children: _buildSearchResults(),
+                            )
+                          : _isLoadingPlaylist
+                              ? Center(child: CircularProgressIndicator())
+                              : _playlistTracks != null &&
+                                      _playlistTracks!.isNotEmpty
+                                  ? ListView(
+                                      children: _buildPlaylistTracks(),
+                                    )
+                                  : Center(child: Text('No results found')),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -181,82 +189,82 @@ class _ListPage extends State<ListPage> {
     if (_searchResults?['tracks']?['items']?.isNotEmpty ?? false) {
       resultList.addAll(
         _searchResults!['tracks']['items'].map<Widget>((track) => Card(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          color: Colors.green[600],
-          child: ListTile(
-            leading: track['album']['images'].isNotEmpty
-                ? Image.network(track['album']['images'][0]['url'],
-                width: 50, height: 50, fit: BoxFit.cover)
-                : null,
-            title: Text(track['name'],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(track['artists'][0]['name']),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MusicPlayerPage(
-                    trackName: track['name'],
-                    artistName: track['artists'][0]['name'],
-                    albumImageUrl: track['album']['images'][0]['url'],
-                    trackUrl: track['external_urls']['spotify'],
-                  ),
-                ),
-              );
-            },
-          ),
-        )),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              color: Colors.green[600],
+              child: ListTile(
+                leading: track['album']['images'].isNotEmpty
+                    ? Image.network(track['album']['images'][0]['url'],
+                        width: 50, height: 50, fit: BoxFit.cover)
+                    : null,
+                title: Text(track['name'],
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(track['artists'][0]['name']),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MusicPlayerPage(
+                        trackName: track['name'],
+                        artistName: track['artists'][0]['name'],
+                        albumImageUrl: track['album']['images'][0]['url'],
+                        trackUrl: track['external_urls']['spotify'],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )),
       );
     }
 
     if (_searchResults?['albums']?['items']?.isNotEmpty ?? false) {
       resultList.addAll(
         _searchResults!['albums']['items'].map<Widget>((album) => Card(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          child: ListTile(
-            leading: album['images'].isNotEmpty
-                ? Image.network(album['images'][0]['url'],
-                width: 50, height: 50, fit: BoxFit.cover)
-                : null,
-            title: Text(album['name'],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(album['artists'][0]['name']),
-          ),
-        )),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: album['images'].isNotEmpty
+                    ? Image.network(album['images'][0]['url'],
+                        width: 50, height: 50, fit: BoxFit.cover)
+                    : null,
+                title: Text(album['name'],
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(album['artists'][0]['name']),
+              ),
+            )),
       );
     }
 
     if (_searchResults?['artists']?['items']?.isNotEmpty ?? false) {
       resultList.addAll(
         _searchResults!['artists']['items'].map<Widget>((artist) => Card(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          child: ListTile(
-            leading: artist['images'].isNotEmpty
-                ? Image.network(artist['images'][0]['url'],
-                width: 50, height: 50, fit: BoxFit.cover)
-                : null,
-            title: Text(artist['name'],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text('Artist'),
-          ),
-        )),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: artist['images'].isNotEmpty
+                    ? Image.network(artist['images'][0]['url'],
+                        width: 50, height: 50, fit: BoxFit.cover)
+                    : null,
+                title: Text(artist['name'],
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text('Artist'),
+              ),
+            )),
       );
     }
 
     if (_searchResults?['playlists']?['items']?.isNotEmpty ?? false) {
       resultList.addAll(
         _searchResults!['playlists']['items'].map<Widget>((playlist) => Card(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          child: ListTile(
-            leading: playlist['images'].isNotEmpty
-                ? Image.network(playlist['images'][0]['url'],
-                width: 50, height: 50, fit: BoxFit.cover)
-                : null,
-            title: Text(playlist['name'],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text('Playlist'),
-          ),
-        )),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: playlist['images'].isNotEmpty
+                    ? Image.network(playlist['images'][0]['url'],
+                        width: 50, height: 50, fit: BoxFit.cover)
+                    : null,
+                title: Text(playlist['name'],
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text('Playlist'),
+              ),
+            )),
       );
     }
 
@@ -277,7 +285,7 @@ class _ListPage extends State<ListPage> {
         child: ListTile(
           leading: track['album']['images'].isNotEmpty
               ? Image.network(track['album']['images'][0]['url'],
-              width: 50, height: 50, fit: BoxFit.cover)
+                  width: 50, height: 50, fit: BoxFit.cover)
               : null,
           title: Text(track['name'],
               style: TextStyle(fontWeight: FontWeight.bold)),
@@ -300,4 +308,3 @@ class _ListPage extends State<ListPage> {
     }).toList();
   }
 }
-

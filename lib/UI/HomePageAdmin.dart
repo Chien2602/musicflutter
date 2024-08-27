@@ -61,23 +61,23 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.house, color: Colors.blue),
+            icon: Icon(FontAwesomeIcons.house, color: Colors.deepPurple),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.list, color: Colors.blue),
+            icon: Icon(FontAwesomeIcons.list, color: Colors.deepPurple),
             label: 'List',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.fileImport, color: Colors.blue),
+            icon: Icon(FontAwesomeIcons.users, color: Colors.deepPurple),
             label: 'User Management',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user, color: Colors.blue),
+            icon: Icon(FontAwesomeIcons.user, color: Colors.deepPurple),
             label: 'Account',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.gear, color: Colors.blue),
+            icon: Icon(FontAwesomeIcons.gear, color: Colors.deepPurple),
             label: 'Settings',
           ),
         ],

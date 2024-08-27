@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:musicflutter/UI/Login.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -30,63 +31,66 @@ class _SignupState extends State<Signup> {
     return maNguoiDung;
   }
 
-  void _signup() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save();
-
-      // Tự động gán MaNguoiDung
-      String maNguoiDung = await _generateMaNguoiDung();
-
-      print('TenDangNhap: $_username');
-      print('MatKhau: $_password');
-      print('MaNguoiDung: $maNguoiDung');
-      print('TenNguoiDung: $_tenNguoiDung');
-      print('DiaChi: $_diaChi');
-      print('SDT: $_sdt');
-      print('Email: $_email');
-      print('GioiTinh: ${_nam ? 'Nam' : 'Nữ'}');
-
-      // Khởi tạo sqflite FFI và mở cơ sở dữ liệu
-      sqfliteFfiInit();
-      final databaseFactory = databaseFactoryFfi;
-      final databasePath = join(await getDatabasesPath(), 'music.db');
-      final database = await databaseFactory.openDatabase(databasePath);
-
-      // Thêm dữ liệu vào bảng USER
-      await database.execute('''
-      INSERT INTO USER (TenDangNhap, MatKhau, MaNguoiDung, TenNguoiDung, DiaChi, SDT, Email, GioiTinh, role)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', [
-        _username,
-        _password,
-        maNguoiDung,
-        _tenNguoiDung,
-        _diaChi,
-        _sdt,
-        _email,
-        _nam ? 'Nam' : 'Nữ',
-        'user'
-      ]);
-
-      // Thêm dữ liệu vào bảng ACCOUNT
-      await database.execute('''
-      INSERT INTO ACCOUNT (Username, Password, Role)
-      VALUES (?, ?, ?)
-    ''', [
-        _username,
-        _password,
-        'user'
-      ]);
-
-      // Truy vấn và in dữ liệu từ bảng ACCOUNT
-      List<Map<String, dynamic>> accountList = await database.query('ACCOUNT');
-      print('Account data: $accountList');
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
+    void _signup() async {
+      if (_formKey.currentState?.validate() ?? false) {
+        _formKey.currentState?.save();
+
+        // Tự động gán MaNguoiDung
+        String maNguoiDung = await _generateMaNguoiDung();
+
+        print('TenDangNhap: $_username');
+        print('MatKhau: $_password');
+        print('MaNguoiDung: $maNguoiDung');
+        print('TenNguoiDung: $_tenNguoiDung');
+        print('DiaChi: $_diaChi');
+        print('SDT: $_sdt');
+        print('Email: $_email');
+        print('GioiTinh: ${_nam ? 'Nam' : 'Nữ'}');
+
+        // Khởi tạo sqflite FFI và mở cơ sở dữ liệu
+        sqfliteFfiInit();
+        final databaseFactory = databaseFactoryFfi;
+        final databasePath = join(await getDatabasesPath(), 'music.db');
+        final database = await databaseFactory.openDatabase(databasePath);
+
+        // Thêm dữ liệu vào bảng USER
+        await database.execute('''
+      INSERT INTO USER (TenDangNhap, MatKhau, MaNguoiDung, TenNguoiDung, DiaChi, SDT, Email, GioiTinh, role)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', [
+          _username,
+          _password,
+          maNguoiDung,
+          _tenNguoiDung,
+          _diaChi,
+          _sdt,
+          _email,
+          _nam ? 'Nam' : 'Nữ',
+          'user'
+        ]);
+
+        // Thêm dữ liệu vào bảng ACCOUNT
+        await database.execute('''
+      INSERT INTO ACCOUNT (Username, Password, Role)
+      VALUES (?, ?, ?)
+    ''', [
+          _username,
+          _password,
+          'user'
+        ]);
+
+        // Truy vấn và in dữ liệu từ bảng ACCOUNT
+        List<Map<String, dynamic>> accountList = await database.query('ACCOUNT');
+        print('Account data: $accountList');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
