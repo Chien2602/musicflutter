@@ -1,20 +1,27 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Lyric.dart';
 
 class MusicPlayerPage extends StatefulWidget {
   final String trackName;
   final String artistName;
   final String albumImageUrl;
-  late final String trackUrl;
+  final String trackUrl;
+  final bool isPlaying;
+  final int currentPosition;
 
   MusicPlayerPage({
     required this.trackName,
     required this.artistName,
     required this.albumImageUrl,
     required this.trackUrl,
+    this.isPlaying = false,
+    this.currentPosition = 0,
   });
 
   @override
@@ -29,14 +36,16 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   bool isPlaying = false;
   bool isUpdatingPosition = false;
   bool isTrackEnded = false;
-
-
+  late bool _isPlaying;
+  late int _currentPosition;
   String? _currentTrackID;
-  int? _savedPositionMs;  // Biến lưu trữ vị trí dừng
+  int? _savedPositionMs;
 
   @override
   void initState() {
     super.initState();
+    _isPlaying = widget.isPlaying;
+    _currentPosition = widget.currentPosition;
     _getDevices();
     _resumeTrack();
     _playTrack();
@@ -53,16 +62,14 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
     final response = await http.get(
       Uri.parse(devicesUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
       final devices = json.decode(response.body)['devices'];
       if (devices.isNotEmpty) {
         setState(() {
-          activeDeviceId = devices[0]['id']; // Chọn thiết bị đầu tiên làm thiết bị phát
+          activeDeviceId = devices[0]['id'];
         });
       } else {
         print('Không tìm thấy thiết bị nào.');
@@ -71,6 +78,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       print('Lỗi khi lấy danh sách thiết bị: ${response.body}');
     }
   }
+
   Future<void> _pauseTrack() async {
     if (activeDeviceId == null) {
       print('Không có thiết bị nào hoạt động.');
@@ -82,9 +90,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
     final response = await http.put(
       Uri.parse(pauseUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
@@ -94,7 +100,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         isUpdatingPosition = false;
       });
 
-      // Lưu vị trí hiện tại của bài hát vào SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       prefs.setInt('position_ms', position.inMilliseconds);
       prefs.setString('current_track_id', _currentTrackID ?? '');
@@ -122,11 +127,10 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       position = Duration.zero;
     }
 
-    if (!isPlaying) {
+    if (!_isPlaying) {
       await _playTrack();
     }
   }
-
 
   Future<void> _playTrack() async {
     if (activeDeviceId == null) {
@@ -136,10 +140,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
     final String token = await _getToken();
     final String playUrl = 'https://api.spotify.com/v1/me/player/play?device_id=$activeDeviceId';
-    final trackID = widget.trackUrl.split('/').last.split('?').first; // Lấy ID từ URL
+    final trackID = widget.trackUrl.split('/').last.split('?').first;
 
-    // Nếu bài hát đã kết thúc, bắt đầu từ đầu
-    final int startPositionMs = isTrackEnded ? 0 : (position.inMilliseconds);
+    final int startPositionMs = isTrackEnded ? 0 : position.inMilliseconds;
     final response = await http.put(
       Uri.parse(playUrl),
       headers: {
@@ -158,7 +161,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         isPlaying = true;
         isUpdatingPosition = true;
         isTrackEnded = false;
-        _currentTrackID = trackID; // Cập nhật ID bài hát hiện tại
+        _currentTrackID = trackID;
       });
       _updatePosition();
     } else {
@@ -173,38 +176,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     await prefs.setInt('current_track_position', position.inMilliseconds);
   }
 
-
-  Future<void> _NextTrack() async {
-    if (activeDeviceId == null) {
-      print('Không có thiết bị nào hoạt động.');
-      return;
-    }
-
-    final String token = await _getToken();
-    final String playUrl = 'https://api.spotify.com/v1/me/player/next';
-
-    final response = await http.post(
-      Uri.parse(playUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      print('Bài hát tiếp theo đang được phát.');
-      setState(() {
-        // Cập nhật trạng thái hoặc thực hiện các thay đổi khác nếu cần
-        isPlaying = true;
-        isUpdatingPosition = true;
-        isTrackEnded = false;
-      });
-    } else {
-      print('Lỗi khi chuyển đến bài hát tiếp theo: ${response.statusCode} - ${response.body}');
-    }
-  }
-
-
-
   Future<void> _seekTrack(double value) async {
     if (activeDeviceId == null) {
       print('Không có thiết bị nào hoạt động.');
@@ -216,9 +187,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
     final response = await http.put(
       Uri.parse(seekUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
@@ -229,6 +198,16 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     } else {
       print('Lỗi khi tua bài hát: ${response.statusCode} - ${response.body}');
     }
+  }
+
+  Future<void> _seekForward() async {
+    final newPosition = position.inSeconds + 10.0;
+    await _seekTrack(newPosition);
+  }
+
+  Future<void> _seekRelay() async {
+    final newPosition = position.inSeconds - 10.0;
+    await _seekTrack(newPosition);
   }
 
   Future<void> _updatePosition() async {
@@ -243,9 +222,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
       final response = await http.get(
         Uri.parse(positionUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.statusCode == 200) {
@@ -264,7 +241,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
             isPlaying = false;
           });
 
-          // Tự động phát lại bài hát từ đầu nếu bài hát kết thúc
           await _playTrack();
         }
       } else if (response.statusCode == 204) {
@@ -281,19 +257,30 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     }
   }
 
-
-
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: widget.trackUrl)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Copied to clipboard!')),
+      );
+    }).catchError((e) {
+      print('Failed to copy text: $e');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Đảm bảo rằng position và duration luôn có giá trị hợp lệ
+    void _showLyricsDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return LyricsApp();
+        },
+      );
+    }
+
     final positionInSeconds = position.inSeconds.toDouble();
     final durationInSeconds = duration.inSeconds.toDouble();
-
-    // Đảm bảo rằng giá trị `max` của Slider không bằng 0
     final sliderMax = durationInSeconds > 0.0 ? durationInSeconds : 1.0;
-
-    // Đảm bảo rằng positionInSeconds không vượt quá sliderMax
     final positionValue = positionInSeconds > sliderMax ? sliderMax : positionInSeconds;
 
     return Scaffold(
@@ -304,13 +291,11 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () async {
-            // Lưu trạng thái bài hát trước khi thoát
             final prefs = await SharedPreferences.getInstance();
             await prefs.setInt('position_ms', position.inMilliseconds);
             await prefs.setBool('is_playing', isPlaying);
 
             Navigator.pop(context, isPlaying);
-           // Quay lại trang trước đó
           },
         ),
       ),
@@ -398,10 +383,10 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                   ),
                   SizedBox(width: 20),
                   IconButton(
-                    icon: Icon(Icons.skip_previous),
+                    icon: Icon(Icons.replay_5),
                     color: Colors.white,
                     iconSize: 40,
-                    onPressed: () {},
+                    onPressed: _seekRelay,
                   ),
                   SizedBox(width: 20),
                   GestureDetector(
@@ -421,15 +406,22 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                   ),
                   SizedBox(width: 20),
                   IconButton(
-                    icon: Icon(Icons.skip_next),
+                    icon: Icon(Icons.forward_5),
                     color: Colors.white,
                     iconSize: 40,
-                    onPressed: _NextTrack,
+                    onPressed: _seekForward,
                   ),
                   SizedBox(width: 20),
                   IconButton(
                     icon: Icon(Icons.share, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: _copyToClipboard,
+                  ),
+                  SizedBox(width: 20),
+                  IconButton(
+                    icon: Icon(Icons.lyrics, color: Colors.white),
+                    onPressed: () {
+                      _showLyricsDialog(context);
+                    },
                   ),
                 ],
               ),
@@ -439,6 +431,4 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       ),
     );
   }
-
 }
-

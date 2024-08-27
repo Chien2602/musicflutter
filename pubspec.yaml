@@ -51,6 +51,7 @@ dependencies:
   shared_preferences:
   just_audio:
   flutter_spinkit:
+  genius_lyrics:
   sqlite3:
   flutter_staggered_grid_view:
 

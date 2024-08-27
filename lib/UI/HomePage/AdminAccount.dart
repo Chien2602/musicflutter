@@ -29,7 +29,7 @@ class _AdminAccountState extends State<AdminAccount> {
         _adminInfo = adminData;
       });
     } else {
-      // Xử lý lỗi hoặc thông báo không tìm thấy thông tin admin
+      // Handle error or notify that admin information is not found
       print('Admin not found');
     }
   }
@@ -38,7 +38,8 @@ class _AdminAccountState extends State<AdminAccount> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Profile'),
+        title: Center(child: Text('Thông tin tài khoản')),
+        leading: SizedBox.shrink(),
         backgroundColor: Colors.teal,
         elevation: 4,
       ),
@@ -60,7 +61,7 @@ class _AdminAccountState extends State<AdminAccount> {
             }
 
             return Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -77,27 +78,32 @@ class _AdminAccountState extends State<AdminAccount> {
                     ),
                   ),
                   SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChangePasswordPage(
-                            username: username,
+                  Center(
+                    child: SizedBox(
+                      width: 150, // Reduced width for the button
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChangePasswordPage(
+                                username: username,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          padding: EdgeInsets.symmetric(vertical: 20), // Smaller padding
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30), // Consistent with other button
                           ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        child: Text(
+                          'Change Password',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Change Password',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ],
@@ -123,8 +129,7 @@ class _AdminAccountState extends State<AdminAccount> {
           value,
           style: TextStyle(fontSize: 16),
         ),
-        leading:
-        Icon(
+        leading: Icon(
           Icons.info_outline_rounded,
           color: Colors.teal,
         ),
@@ -132,7 +137,6 @@ class _AdminAccountState extends State<AdminAccount> {
     );
   }
 }
-
 
 class ChangePasswordPage extends StatefulWidget {
   final String username;
@@ -176,7 +180,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         elevation: 4,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(horizontal: 32.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -213,18 +217,24 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 },
               ),
               SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _changePassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              Center(
+                child: SizedBox(
+                  width: 100,  // Set a smaller width for the button
+                  child: ElevatedButton(
+                    onPressed: _changePassword,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      padding: EdgeInsets.symmetric(vertical: 10),  // Adjust vertical padding as needed
+                      minimumSize: Size(80, 40),  // Set minimum size for width and height
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),  // Adjust the radius as needed
+                      ),
+                    ),
+                    child: Text(
+                      'Change Password',
+                      style: TextStyle(color: Colors.white, fontSize: 12),  // Smaller font size
+                    ),
                   ),
-                ),
-                child: Text(
-                  'Change Password',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ],
