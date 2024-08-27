@@ -73,7 +73,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
             label: 'User Management',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user, color: Colors.deepPurple),
+            icon: Icon(FontAwesomeIcons.userLarge, color: Colors.deepPurple),
             label: 'Account',
           ),
           BottomNavigationBarItem(

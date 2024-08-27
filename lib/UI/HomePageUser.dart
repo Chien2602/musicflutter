@@ -66,7 +66,7 @@ class _HomePageUserState extends State<HomePageUser> {
             label: 'List',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user, color: Colors.blue),
+            icon: Icon(FontAwesomeIcons.userLarge, color: Colors.blue),
             label: 'Account',
           ),
           BottomNavigationBarItem(

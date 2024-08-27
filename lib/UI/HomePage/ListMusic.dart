@@ -136,7 +136,7 @@ class _ListPage extends State<ListPage> {
                         controller: _searchController,
                         decoration: InputDecoration(
                           labelText:
-                              'Tìm kiếm bài hát, album, nghệ sĩ, playlist',
+                              'Tìm kiếm bài hát',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -154,7 +154,7 @@ class _ListPage extends State<ListPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text('Search'),
+                      child: Text('Search', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
