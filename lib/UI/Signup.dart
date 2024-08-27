@@ -27,7 +27,7 @@ class _SignupState extends State<Signup> {
   Future<String> _generateMaNguoiDung() async {
     final dbHelper = AppDatabase();
     int userCount = await dbHelper.getUserCount();
-    String maNguoiDung = 'U000${userCount + 1}';
+    String maNguoiDung = 'U00${userCount + 1}';
     return maNguoiDung;
   }
 
