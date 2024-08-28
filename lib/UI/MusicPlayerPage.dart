@@ -320,8 +320,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         child: Stack(
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(height: 20,),
                 Container(
                   margin: EdgeInsets.all(20),
                   height: 150,
@@ -341,6 +342,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: 20,),
                 Text(
                   widget.trackName,
                   style: GoogleFonts.poppins(
@@ -357,7 +359,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     color: Colors.white70,
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 30),
                 Slider(
                   activeColor: Colors.white,
                   inactiveColor: Colors.white24,
@@ -384,6 +386,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

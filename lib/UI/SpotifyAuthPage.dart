@@ -62,7 +62,7 @@ class _SpotifyAuthPageState extends State<SpotifyAuthPage> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                LoginPage()), // Hoặc trang phù hợp với vai trò
+                LoginPage()),
       );
     } else {
       print('Không lấy được access token: ${response.body}');
@@ -99,8 +99,7 @@ class _SpotifyAuthPageState extends State<SpotifyAuthPage> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.start, // Đẩy nội dung lên sát AppBar
+              mainAxisAlignment: MainAxisAlignment.start, // Đẩy nội dung lên sát AppBar
               children: [
                 SizedBox(height: 20), // Khoảng cách từ AppBar
                 Image.asset(

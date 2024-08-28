@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Database/Spotify_Service.dart'; // Đảm bảo rằng SpotifyService sử dụng token chính xác
-import '../../Database/Refrech_Token.dart';
+import '../../Database/Spotify_Service.dart';
 import '../MusicPlayerPage.dart';
 
 class ListPage extends StatefulWidget {
@@ -26,9 +25,6 @@ class _ListPage extends State<ListPage> {
   }
 
   Future<void> _initializeSpotifyService() async {
-    final authService = SpotifyAuthService();
-    final token = await authService.fetchAccessToken();
-    print(token);
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _accessToken = prefs.getString('spotify_token');
@@ -83,26 +79,7 @@ class _ListPage extends State<ListPage> {
       });
     }
   }
-
-  void _navigateToMusicPlayer() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? trackName = prefs.getString('current_track_name');
-    String? artistName = prefs.getString('current_artist_name');
-    String? albumImageUrl = prefs.getString('current_album_image_url');
-    String? trackUrl = prefs.getString('current_track_url');
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MusicPlayerPage(
-          trackName: trackName ?? 'No song playing',
-          artistName: artistName ?? '',
-          albumImageUrl: albumImageUrl ?? '',
-          trackUrl: trackUrl ?? '',
-        ),
-      ),
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -118,14 +95,7 @@ class _ListPage extends State<ListPage> {
             ],
           ),
         ),
-        child: GestureDetector(
-          onHorizontalDragEnd: (details) {
-            if (details.primaryVelocity != null &&
-                details.primaryVelocity! > 0) {
-              _navigateToMusicPlayer(); // Vuốt phải, điều hướng đến trang MusicPlayerPage
-            }
-          },
-          child: Padding(
+        child:Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
@@ -179,7 +149,6 @@ class _ListPage extends State<ListPage> {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -221,6 +190,7 @@ class _ListPage extends State<ListPage> {
       resultList.addAll(
         _searchResults!['albums']['items'].map<Widget>((album) => Card(
               margin: EdgeInsets.symmetric(vertical: 8),
+              color: Colors.green[600],
               child: ListTile(
                 leading: album['images'].isNotEmpty
                     ? Image.network(album['images'][0]['url'],
@@ -238,6 +208,7 @@ class _ListPage extends State<ListPage> {
       resultList.addAll(
         _searchResults!['artists']['items'].map<Widget>((artist) => Card(
               margin: EdgeInsets.symmetric(vertical: 8),
+              color: Colors.green[600],
               child: ListTile(
                 leading: artist['images'].isNotEmpty
                     ? Image.network(artist['images'][0]['url'],
@@ -255,6 +226,7 @@ class _ListPage extends State<ListPage> {
       resultList.addAll(
         _searchResults!['playlists']['items'].map<Widget>((playlist) => Card(
               margin: EdgeInsets.symmetric(vertical: 8),
+              color: Colors.green[600],
               child: ListTile(
                 leading: playlist['images'].isNotEmpty
                     ? Image.network(playlist['images'][0]['url'],
