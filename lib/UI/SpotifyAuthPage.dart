@@ -2,12 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:musicflutter/UI/HomePage/Home.dart';
 import 'package:musicflutter/UI/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'HomePage/ListMusic.dart';
 
 class SpotifyAuthPage extends StatefulWidget {
   @override
@@ -48,7 +45,6 @@ class _SpotifyAuthPageState extends State<SpotifyAuthPage> {
         'grant_type': 'authorization_code',
         'code': _authCode,
         'redirect_uri': redirectUri,
-        // Nếu bạn sử dụng PKCE, thêm code_verifier ở đây
         'code_verifier': '',
       },
     );
